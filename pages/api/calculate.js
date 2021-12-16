@@ -50,37 +50,41 @@ export default function calculateAPI(req, res) {
       let invalid = [];
       let valid = [];
 
-      /*
-       * Only known coordinates should be accepted
-       */
-      req.body.stops.forEach((stop) => {
-        if (coordinates[stop]) {
-          valid.push(coordinates[stop]);
-        } else {
-          stop.length ? invalid.push(stop) : null;
+      try {
+        /*
+         * Only known coordinates should be accepted
+         */
+        req.body.stops.forEach((stop) => {
+          if (coordinates[stop]) {
+            valid.push(coordinates[stop]);
+          } else {
+            stop.length ? invalid.push(stop) : null;
+          }
+        });
+
+        if (invalid.length || valid.length < 2) {
+          res.status(200).json({ invalid: invalid });
         }
-      });
 
-      if (invalid.length || valid.length < 2) {
-        res.status(200).json({ invalid: invalid });
+        let retval = 0;
+
+        // Grab distances here
+
+        for (let i = 0; i < valid.length - 1; i++) {
+          let dist = haversine(
+            valid[i][0],
+            valid[i][1],
+            valid[i + 1][0],
+            valid[i + 1][1]
+          );
+
+          retval += dist;
+        }
+
+        res.status(200).json({ valid: valid, totalDistance: retval });
+      } catch {
+        res.status(200).send({ invalid: [] });
       }
-
-      let retval = 0;
-
-      // Grab distances here
-
-      for (let i = 0; i < valid.length - 1; i++) {
-        let dist = haversine(
-          valid[i][0],
-          valid[i][1],
-          valid[i + 1][0],
-          valid[i + 1][1]
-        );
-
-        retval += dist;
-      }
-
-      res.status(200).json({ valid: valid, totalDistance: retval });
 
       break;
 
