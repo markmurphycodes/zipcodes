@@ -64,6 +64,7 @@ export default function calculateAPI(req, res) {
 
         if (invalid.length || valid.length < 2) {
           res.status(200).json({ invalid: invalid });
+          return;
         }
 
         let retval = 0;

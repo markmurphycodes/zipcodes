@@ -8,6 +8,7 @@ export default function Home() {
   const [qty, setQty] = useState(["", ""]); // qty is a misnomer, holds the values of the inputs
   const [showModal, setShowModal] = useState(false); // controls the message modal
   const [msg, setMsg] = useState({}); // content for message in modal
+  const [ready, setReady] = useState(true);
 
   // wrapper for async axios call
   const handleCalc = () => {
@@ -15,6 +16,7 @@ export default function Home() {
       let messageData = {};
 
       try {
+        setReady(false);
         let res = await axios.post("/api/calculate", {
           stops: qty,
         });
@@ -35,12 +37,13 @@ export default function Home() {
         // display modal
         setMsg(messageData);
         setShowModal(true);
+        setReady(true);
       } catch (e) {
         console.error(e);
       }
     };
 
-    getData();
+    if (ready) getData();
   };
 
   /*
