@@ -15,6 +15,8 @@ f.forEach((coord) => {
   coordinates[tmp[0]] = [ parseFloat(tmp[1]), parseFloat(tmp[2]) ]
 })
 
+console.log("i'm here")
+
 
 const radians = (n) => {
   return n * Math.PI / 180;

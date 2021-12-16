@@ -8,16 +8,28 @@ export default function Home() {
 
   const [qty, setQty] = useState(['', '']);
   const [showModal, setShowModal] = useState(false);
+  const [msg, setMsg] = useState({});
 
   const handleCalc = () => {
 
     const getData = async () => {
 
+      let messageData = {};
+
       try{
       let res = await axios.post('/api/calculate', {
         stops: qty
       });
-      console.log(res.data);
+
+      if(res.data.invalid){
+        messageData.header = "Whoops, something went wront!";
+        messageData.body = `It looks like some of your zipcodes are invalid: \n${res.data.invalid}`
+      }else{
+        messageData.header = "Here is your distance!";
+        messageData.body = `The total distance between your zipcodes is ${res.data.totalDistance.toFixed(2)} miles.`
+      }
+
+      setMsg(messageData);
 
       setShowModal(true)
 
@@ -54,7 +66,7 @@ export default function Home() {
         <title>Haversine Shenanigans</title>
       </Head>
 
-      <Modal open={showModal} click={() => setShowModal(false)} />
+      <Modal open={showModal} click={() => setShowModal(false)} content={msg} />
 
 
     <div className="flex-grow overflow-auto">
